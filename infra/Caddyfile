@@ -1,5 +1,11 @@
 {
 	admin off
+	servers {
+		# Confía en el X-Forwarded-For de proxies en redes privadas (Traefik de Coolify, Docker)
+		# y toma la IP del cliente de derecha a izquierda para que no se pueda falsificar.
+		trusted_proxies static {$TRUSTED_PROXIES:private_ranges}
+		trusted_proxies_strict
+	}
 }
 
 {$DOMAIN::8080} {
@@ -17,12 +23,16 @@
 
 	handle /api/* {
 		reverse_proxy {$API_UPSTREAM:host.docker.internal:3101} {
+			# La API ve una sola IP: la del cliente real.
+			header_up X-Forwarded-For {client_ip}
 			# Necesario para que los eventos SSE lleguen sin buffer.
 			flush_interval -1
 		}
 	}
 
 	handle {
-		reverse_proxy {$WEB_UPSTREAM:host.docker.internal:3100}
+		reverse_proxy {$WEB_UPSTREAM:host.docker.internal:3100} {
+			header_up X-Forwarded-For {client_ip}
+		}
 	}
 }

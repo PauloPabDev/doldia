@@ -34,27 +34,44 @@ Los puertos por defecto (web 3100, API 3101, Postgres 5442, Caddy 8180) se cambi
 
 ## Producción
 
+Todo corre en **una sola imagen** (`Dockerfile` en la raíz): Postgres 16, API, web y Caddy, coordinados por `infra/docker/entrypoint.sh`. Solo Caddy queda expuesto, en el puerto 8080; API (3101), web (3100) y Postgres (5432) escuchan en `127.0.0.1` dentro del contenedor, así que no chocan con otros servicios del servidor.
+
 ```bash
-cp .env.production.example .env.production   # secretos reales
-DOMAIN=habitos.ejemplo.com POSTGRES_PASSWORD=... docker compose -f infra/docker-compose.prod.yml up -d --build
+docker run -d -p 8080:8080 -v habitos_data:/data \
+  -e PUBLIC_URL=https://habitos.ejemplo.com ghcr.io/paulopabdev/doldia:latest
 ```
 
-La API aplica las migraciones al arrancar. El servicio `backup` hace `pg_dump` diario con 14 días de retención en `infra/backups` (sincronízalo con almacenamiento externo). El workflow `.github/workflows/ci.yml` corre lint, tipos y pruebas en cada PR y construye las imágenes (sin publicarlas).
+Al arrancar, el contenedor:
+
+1. Genera los secretos que falten (`POSTGRES_PASSWORD`, `JWT_SECRET`, claves VAPID) y los guarda en `/data/secrets.env`. Si defines una variable de entorno, esa tiene prioridad.
+2. Inicializa Postgres en `/data/postgres` la primera vez y sincroniza la contraseña del usuario `habitos`.
+3. Aplica las migraciones y arranca API, web y Caddy con usuarios sin privilegios.
+4. Hace `pg_dump` diario en `/data/backups` (14 días de retención; ajústalo con `BACKUP_RETENTION_DAYS`). Sincronízalo con almacenamiento externo.
+
+Si un proceso cae, el contenedor se detiene y Docker o Coolify lo reinicia. Con `SIGTERM` se apaga en orden, Postgres al final. El volumen `/data` es todo el estado: respáldalo, porque guarda la base y los secretos. El servidor necesita al menos 1 GB de RAM.
+
+| Variable | Obligatoria | Uso |
+| --- | --- | --- |
+| `PUBLIC_URL` | Sí | URL pública con https |
+| `VAPID_SUBJECT` | No | `mailto:` de contacto para push; por defecto, `PUBLIC_URL` |
+| `POSTGRES_PASSWORD`, `JWT_SECRET`, `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` | No | Se generan solas; defínelas solo para fijar valores propios |
+| `JWT_SECRET_PREVIOUS` | No | Secreto anterior al rotar `JWT_SECRET` |
+| `TRUSTED_PROXIES` | No | Rangos de proxies confiables para obtener la IP real; por defecto, las redes privadas |
 
 ### CI/CD con GitHub Actions y Coolify
 
-Al hacer push a `main`:
+Cada PR corre lint, tipos y pruebas, construye la imagen y la prueba arrancada: health, web y un reinicio. Al hacer push a `main`:
 
 1. `check`: lint, tipos y pruebas.
-2. `image`: construye `api`, `web` y `proxy`, las publica en GHCR (`ghcr.io/paulopabdev/doldia-{api,web,proxy}`, etiquetas `latest` y `sha-<commit>`) con SBOM y procedencia firmada.
+2. `image`: la misma prueba de humo, y luego publica `ghcr.io/paulopabdev/doldia` con las etiquetas `latest` y `sha-<commit>`, SBOM y procedencia firmada.
 3. `deploy`: llama al webhook de Coolify para redesplegar.
 
 Configuración única:
 
-- En Coolify, crea un recurso *Docker Compose* con `infra/docker-compose.coolify.yml`, define sus variables (`POSTGRES_PASSWORD`, `JWT_SECRET`, `VAPID_*`, `PUBLIC_URL`) y asigna el dominio al servicio `proxy` en el puerto 8080.
-- Si los paquetes de GHCR son privados, agrega en el servidor de Coolify un login a `ghcr.io` con un token de solo `read:packages` (o haz públicos los paquetes).
+- En Coolify, crea un recurso *Docker Compose* con `infra/docker-compose.prod.yml`, define `PUBLIC_URL` y asigna el dominio al servicio `app` en el puerto 8080. Coolify termina el HTTPS.
+- Si el paquete de GHCR es privado, agrega en el servidor de Coolify un login a `ghcr.io` con un token de solo `read:packages` (o haz público el paquete).
 - En Coolify, *Keys & Tokens → API tokens*: crea un token con permiso de deploy. Copia la URL del webhook del recurso (*Webhooks → Deploy Webhook*).
-- En GitHub, *Settings → Environments → production*, agrega los secretos `COOLIFY_WEBHOOK` (URL https) y `COOLIFY_TOKEN`. Opcional: exige aprobación manual y limita el environment a la rama `main`.
+- En GitHub, *Settings → Environments → production*, agrega los secretos `COOLIFY_WEBHOOK` (URL https) y `COOLIFY_TOKEN`. El environment ya está limitado a `main`; puedes exigir aprobación manual.
 
 Para volver a una versión anterior, define `IMAGE_TAG=sha-<commit>` en Coolify y redespliega.
 

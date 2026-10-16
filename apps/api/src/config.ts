@@ -4,6 +4,7 @@ const secret = z.string().min(32, 'debe tener al menos 32 caracteres');
 
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+  API_HOST: z.string().min(1).default('0.0.0.0'),
   API_PORT: z.coerce.number().int().default(3101),
   DATABASE_URL: z.url(),
   JWT_SECRET: secret,

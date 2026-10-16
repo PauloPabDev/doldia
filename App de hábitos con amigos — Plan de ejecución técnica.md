@@ -55,8 +55,10 @@ habitos/
 │  └─ config/              # tsconfig base
 ├─ infra/
 │  ├─ Caddyfile
+│  ├─ docker/              # entrypoint y respaldo de la imagen única
 │  ├─ docker-compose.dev.yml
 │  └─ docker-compose.prod.yml
+├─ Dockerfile              # imagen única de producción
 ├─ turbo.json
 ├─ pnpm-workspace.yaml
 └─ package.json
@@ -334,15 +336,19 @@ Un solo comando levanta todo en local y el mismo Caddyfile funciona en desarroll
 
 **Pipeline de Turbo:** `build` depende de `^build`, así `contracts`, `tokens` y `ui` se compilan antes que las apps; `typecheck`, `lint` y `test` corren en paralelo; `dev` no se cachea.
 
-**Builds de producción**
+**Builds de producción: una sola imagen**
 
-- **web:** `output: 'standalone'` de Next, imagen Docker multi-stage liviana.
-- **api:** `nest build` a JavaScript, imagen multi-stage solo con dependencias de producción mediante `pnpm deploy --prod`.
-- **docker-compose.prod.yml:** caddy, web, api y postgres con volumen persistente; Caddy obtiene el certificado HTTPS solo.
+- **Dockerfile en la raíz, multi-stage:** compila API y web con Turbo, deja la API solo con dependencias de producción (`pnpm deploy --prod`) y la web con `output: 'standalone'`, y las junta en una imagen `node:24-alpine` con Postgres 16 y el binario de Caddy.
+- **Un contenedor, cuatro procesos:** `tini` como PID 1 y `infra/docker/entrypoint.sh` como supervisor. Arranca Postgres, aplica las migraciones y luego levanta API, web y Caddy. Si uno cae, detiene todo para que el orquestador reinicie el contenedor; con `SIGTERM` apaga en orden, Postgres al final.
+- **Sin conflictos de puertos:** solo Caddy se expone (8080). API (3101), web (3100) y Postgres (5432) escuchan en `127.0.0.1`. Caddy envía `/api/*` a la API (SSE sin buffer) y el resto a Next, y Next llama a la API por `127.0.0.1`.
+- **Mínimo privilegio:** Postgres corre como `postgres` y API, web y Caddy como `node`; root solo prepara el volumen. Postgres acepta al superusuario por socket local (peer) y a la app con contraseña (SCRAM).
+- **Lista para funcionar:** solo `PUBLIC_URL` es obligatoria. Los secretos que falten (`POSTGRES_PASSWORD`, `JWT_SECRET`, VAPID) se generan en el primer arranque y se guardan en el volumen `/data/secrets.env`. Una variable de entorno siempre tiene prioridad.
+- **Estado en un volumen:** `/data` guarda la base, los secretos y los respaldos.
+- **HTTPS:** lo termina Coolify (Traefik) delante del contenedor. Caddy confía en el `X-Forwarded-For` de redes privadas en modo estricto y entrega a la API la IP real del cliente para el límite de peticiones.
 
-**CI con GitHub Actions:** en cada PR corren typecheck, lint y test con caché de pnpm y Turbo; al hacer merge a `main` se construyen las imágenes, se aplican las migraciones y se despliega al servidor.
+**CI/CD con GitHub Actions:** en cada PR corren typecheck, lint y test con caché de pnpm y Turbo, y se construye la imagen y se prueba arrancada (health, web y un reinicio). Al hacer merge a `main`, además se publica en GHCR (`latest` y `sha-<commit>`) con SBOM y procedencia firmada, y un webhook pide a Coolify el redeploy. Las migraciones corren al arrancar el contenedor. Las actions van fijadas por SHA, cada job tiene permisos mínimos y los secretos de Coolify viven en el environment `production`, limitado a `main`.
 
-**Respaldo:** `pg_dump` diario a almacenamiento externo con 14 días de retención.
+**Respaldo:** `pg_dump` diario dentro del contenedor a `/data/backups` con 14 días de retención; sincronízalo con almacenamiento externo.
 
 ## Fases de ejecución
 

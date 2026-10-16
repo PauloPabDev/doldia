@@ -1,69 +1,28 @@
+# Producción con la imagen única que publica GitHub Actions en GHCR (Postgres, API, web y Caddy).
+# En Coolify: asigna el dominio al servicio "app", puerto 8080; Coolify termina el HTTPS.
+# Sin Coolify: agrega `ports: ["8080:8080"]` y pon delante un proxy con HTTPS.
 name: habitos
 
 services:
-  db:
-    image: postgres:16-alpine
+  app:
+    image: ghcr.io/paulopabdev/doldia:${IMAGE_TAG:-latest}
+    pull_policy: always
     restart: unless-stopped
+    stop_grace_period: 30s
     environment:
-      POSTGRES_USER: habitos
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?define POSTGRES_PASSWORD}
-      POSTGRES_DB: habitos
+      PUBLIC_URL: ${PUBLIC_URL:?define PUBLIC_URL}
+      # Opcionales: si quedan vacíos, se generan en el primer arranque y se guardan en /data/secrets.env.
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-}
+      JWT_SECRET: ${JWT_SECRET:-}
+      JWT_SECRET_PREVIOUS: ${JWT_SECRET_PREVIOUS:-}
+      VAPID_PUBLIC_KEY: ${VAPID_PUBLIC_KEY:-}
+      VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY:-}
+      VAPID_SUBJECT: ${VAPID_SUBJECT:-}
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-14}
     volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U habitos"]
-      interval: 5s
-      retries: 20
-
-  api:
-    build: { context: .., dockerfile: apps/api/Dockerfile }
-    restart: unless-stopped
-    env_file: ../.env.production
-    environment:
-      DATABASE_URL: postgres://habitos:${POSTGRES_PASSWORD}@db:5432/habitos
-      NODE_ENV: production
-      API_PORT: "3101"
-    depends_on:
-      db: { condition: service_healthy }
-
-  web:
-    build: { context: .., dockerfile: apps/web/Dockerfile }
-    restart: unless-stopped
-    environment:
-      API_INTERNAL_URL: http://api:3101
-    depends_on: [api]
-
-  proxy:
-    image: caddy:2.10-alpine
-    restart: unless-stopped
-    ports:
-      - "80:8080"
-      - "443:443"
-      - "443:443/udp"
-    environment:
-      # Con un dominio real, Caddy obtiene el certificado HTTPS solo.
-      DOMAIN: ${DOMAIN:?define DOMAIN}
-      API_UPSTREAM: api:3101
-      WEB_UPSTREAM: web:3100
-      CSP_SCRIPT_EXTRA: ""
-      CSP_CONNECT_EXTRA: ""
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-    depends_on: [web, api]
-
-  backup:
-    image: postgres:16-alpine
-    restart: unless-stopped
-    environment:
-      PGPASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - ${BACKUP_DIR:-./backups}:/backups
-      - ./backup.sh:/backup.sh:ro
-    entrypoint: ["sh", "/backup.sh"]
-    depends_on:
-      db: { condition: service_healthy }
+      # Base de datos, secretos generados y respaldos. Respalda este volumen.
+      - habitos_data:/data
+    expose: ["8080"]
 
 volumes:
-  pgdata:
-  caddy_data:
+  habitos_data:

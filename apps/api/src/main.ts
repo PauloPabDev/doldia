@@ -6,8 +6,8 @@ import { loadEnv } from './config';
 async function main() {
   const env = loadEnv();
   const app = await createApp();
-  await app.listen(env.API_PORT, '0.0.0.0');
-  new Logger('Bootstrap').log(`API escuchando en :${env.API_PORT}/api/v1`);
+  await app.listen(env.API_PORT, env.API_HOST);
+  new Logger('Bootstrap').log(`API escuchando en ${env.API_HOST}:${env.API_PORT}/api/v1`);
 }
 
 main().catch((err) => {
