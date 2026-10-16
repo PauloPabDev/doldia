@@ -1,0 +1,35 @@
+@layer components {
+  .hb-xp {
+    --xp-color: var(--color-accent);
+    display: grid;
+    gap: var(--space-1);
+  }
+  .hb-xp__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-2);
+  }
+  .hb-xp__title {
+    font-weight: var(--font-weight-medium);
+  }
+  .hb-xp__votes,
+  .hb-xp__numbers {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .hb-xp__track {
+    height: 6px;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-2);
+    overflow: hidden;
+  }
+  .hb-xp__fill {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--xp-color);
+    transition: inline-size var(--motion-spring) var(--ease-spring);
+  }
+}

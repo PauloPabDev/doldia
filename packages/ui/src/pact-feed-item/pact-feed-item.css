@@ -1,0 +1,32 @@
+@layer components {
+  .hb-feed-item {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-4) 0;
+    border-bottom: 1px solid var(--color-border);
+    list-style: none;
+  }
+  .hb-feed-item__body {
+    flex: 1;
+    min-width: 0;
+    display: grid;
+    gap: var(--space-1);
+  }
+  .hb-feed-item__text {
+    margin: 0;
+    line-height: var(--line-height-body);
+  }
+  .hb-feed-item__habit {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-accent);
+  }
+  .hb-feed-item__note {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+  .hb-feed-item__when {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+  }
+}

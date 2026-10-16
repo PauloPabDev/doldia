@@ -1,0 +1,37 @@
+@layer components {
+  .hb-medal {
+    margin: 0;
+    display: grid;
+    justify-items: center;
+    gap: var(--space-2);
+    text-align: center;
+  }
+  .hb-medal__shape {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    /* Forma propia de medalla: hexágono redondeado. */
+    clip-path: polygon(50% 0, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+    background: var(--color-celebrate-soft);
+    color: var(--color-celebrate);
+  }
+  .hb-medal--locked .hb-medal__shape {
+    background: var(--color-surface-2);
+    color: var(--color-neutral);
+  }
+  .hb-medal__title {
+    display: grid;
+    gap: 2px;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+  }
+  .hb-medal--locked .hb-medal__title {
+    color: var(--color-text-muted);
+  }
+  .hb-medal__description {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-regular);
+    color: var(--color-text-muted);
+  }
+}

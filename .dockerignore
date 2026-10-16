@@ -1,0 +1,13 @@
+**/node_modules
+**/dist
+**/dist-test
+**/.next
+**/.turbo
+.env
+.git
+*.md
+.env.*
+!.env*.example
+*.deb
+.github
+infra/backups

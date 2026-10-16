@@ -1,0 +1,83 @@
+# Despliegue en Coolify con las imágenes que publica GitHub Actions en GHCR.
+# Coolify (Traefik) termina el HTTPS: asigna el dominio al servicio "proxy", puerto 8080.
+name: habitos
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: habitos
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?define POSTGRES_PASSWORD}
+      POSTGRES_DB: habitos
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U habitos"]
+      interval: 5s
+      retries: 20
+
+  api:
+    image: ghcr.io/pedropab/doldia-api:${IMAGE_TAG:-latest}
+    pull_policy: always
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      API_PORT: "3101"
+      DATABASE_URL: postgres://habitos:${POSTGRES_PASSWORD}@db:5432/habitos
+      JWT_SECRET: ${JWT_SECRET:?define JWT_SECRET}
+      JWT_SECRET_PREVIOUS: ${JWT_SECRET_PREVIOUS:-}
+      JWT_ISSUER: ${JWT_ISSUER:-habitos}
+      VAPID_PUBLIC_KEY: ${VAPID_PUBLIC_KEY:?define VAPID_PUBLIC_KEY}
+      VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY:?define VAPID_PRIVATE_KEY}
+      VAPID_SUBJECT: ${VAPID_SUBJECT:?define VAPID_SUBJECT}
+      PUBLIC_URL: ${PUBLIC_URL:?define PUBLIC_URL}
+    depends_on:
+      db: { condition: service_healthy }
+
+  web:
+    image: ghcr.io/pedropab/doldia-web:${IMAGE_TAG:-latest}
+    pull_policy: always
+    restart: unless-stopped
+    environment:
+      API_INTERNAL_URL: http://api:3101
+    depends_on: [api]
+
+  proxy:
+    image: ghcr.io/pedropab/doldia-proxy:${IMAGE_TAG:-latest}
+    pull_policy: always
+    restart: unless-stopped
+    # Sin DOMAIN, Caddy escucha HTTP en :8080 y deja el TLS a Coolify.
+    environment:
+      API_UPSTREAM: api:3101
+      WEB_UPSTREAM: web:3100
+      CSP_SCRIPT_EXTRA: ""
+      CSP_CONNECT_EXTRA: ""
+    expose: ["8080"]
+    depends_on: [web, api]
+
+  backup:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - backups:/backups
+    entrypoint:
+      - sh
+      - -c
+      - |
+        set -eu
+        while true; do
+          file="/backups/habitos-$$(date -u +%Y%m%d-%H%M).sql.gz"
+          pg_dump -h db -U habitos habitos | gzip > "$$file"
+          echo "Respaldo creado: $$file"
+          find /backups -name 'habitos-*.sql.gz' -mtime +14 -delete
+          sleep 86400
+        done
+    depends_on:
+      db: { condition: service_healthy }
+
+volumes:
+  pgdata:
+  backups:

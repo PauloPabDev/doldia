@@ -1,0 +1,28 @@
+{
+	admin off
+}
+
+{$DOMAIN::8080} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		X-Frame-Options DENY
+		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' {$CSP_SCRIPT_EXTRA}; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' {$CSP_CONNECT_EXTRA}; worker-src 'self'; manifest-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+		-Server
+	}
+
+	handle /api/* {
+		reverse_proxy {$API_UPSTREAM:host.docker.internal:3101} {
+			# Necesario para que los eventos SSE lleguen sin buffer.
+			flush_interval -1
+		}
+	}
+
+	handle {
+		reverse_proxy {$WEB_UPSTREAM:host.docker.internal:3100}
+	}
+}

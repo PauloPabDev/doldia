@@ -1,0 +1,28 @@
+@layer components {
+  .auth {
+    display: grid;
+    align-content: center;
+    gap: var(--space-6);
+    width: 100%;
+    max-width: 420px;
+    min-height: 100dvh;
+    margin-inline: auto;
+    padding: var(--space-8) var(--space-4);
+  }
+  .auth__brand img {
+    border-radius: var(--radius-md);
+  }
+  .auth__form {
+    display: grid;
+    gap: var(--space-4);
+  }
+  .auth__switch {
+    text-align: center;
+    color: var(--color-text-muted);
+  }
+  .auth__invite {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+}

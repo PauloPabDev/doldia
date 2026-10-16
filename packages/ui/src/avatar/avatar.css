@@ -1,0 +1,27 @@
+@layer components {
+  .hb-avatar {
+    --avatar-size: 40px;
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    width: var(--avatar-size);
+    height: var(--avatar-size);
+    border-radius: 50%;
+    background: oklch(0.88 0.06 var(--avatar-hue));
+    color: oklch(0.32 0.06 var(--avatar-hue));
+    font-weight: var(--font-weight-bold);
+    font-size: calc(var(--avatar-size) * 0.38);
+    user-select: none;
+  }
+  .hb-avatar--sm {
+    --avatar-size: 28px;
+  }
+  .hb-avatar--lg {
+    --avatar-size: 64px;
+  }
+  .hb-avatar--lit {
+    box-shadow:
+      0 0 0 2px var(--color-bg),
+      0 0 0 4px var(--color-celebrate);
+  }
+}

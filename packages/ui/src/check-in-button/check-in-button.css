@@ -1,0 +1,98 @@
+@layer components {
+  .hb-checkin {
+    --checkin-color: var(--color-accent);
+    --x: 50%;
+    --y: 50%;
+    position: relative;
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: var(--touch-checkin);
+    height: var(--touch-checkin);
+    padding: 0;
+    border: 2px solid var(--checkin-color);
+    border-radius: 50%;
+    background: var(--color-surface);
+    color: var(--checkin-color);
+    cursor: pointer;
+    overflow: hidden;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    transition: transform var(--motion-quick) var(--ease-out);
+  }
+  .hb-checkin--calm {
+    --checkin-color: var(--color-calm);
+  }
+  .hb-checkin:active {
+    transform: scale(0.92);
+  }
+  .hb-checkin__fill {
+    position: absolute;
+    inset: 0;
+    background: var(--checkin-color);
+    clip-path: circle(0 at var(--x) var(--y));
+    transition: clip-path var(--motion-spring) var(--ease-out);
+  }
+  .hb-checkin__icon {
+    position: relative;
+    width: 28px;
+    height: 28px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .hb-checkin__check {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    opacity: 0.35;
+  }
+  .hb-checkin__mini {
+    position: absolute;
+    right: 6px;
+    bottom: 4px;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+  }
+  .hb-checkin--done,
+  .hb-checkin--min {
+    color: var(--color-on-accent);
+    animation: hb-checkin-bounce var(--motion-spring) var(--ease-spring);
+  }
+  .hb-checkin--done .hb-checkin__fill,
+  .hb-checkin--min .hb-checkin__fill {
+    clip-path: circle(150% at var(--x) var(--y));
+  }
+  .hb-checkin--done .hb-checkin__check,
+  .hb-checkin--min .hb-checkin__check {
+    opacity: 1;
+    animation: hb-check-draw var(--motion-spring) var(--ease-out) both;
+  }
+  .hb-checkin--skip {
+    border-style: dashed;
+    color: var(--color-calm);
+    border-color: var(--color-calm);
+  }
+  .hb-checkin--relapse {
+    border-color: var(--color-neutral);
+    color: var(--color-neutral);
+  }
+  .hb-checkin:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+  @keyframes hb-check-draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+  }
+  @keyframes hb-checkin-bounce {
+    40% {
+      transform: scale(1.12);
+    }
+  }
+}

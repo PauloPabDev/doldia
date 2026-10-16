@@ -1,0 +1,76 @@
+@layer components {
+  .hb-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: var(--touch-min);
+    min-width: var(--touch-min);
+    padding: var(--space-2) var(--space-6);
+    border: 1px solid transparent;
+    border-radius: var(--radius-pill);
+    font: inherit;
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-md);
+    line-height: var(--line-height-tight);
+    cursor: pointer;
+    text-decoration: none;
+    transition:
+      transform var(--motion-quick) var(--ease-out),
+      background-color var(--motion-quick) var(--ease-out),
+      opacity var(--motion-quick) var(--ease-out);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .hb-button:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+  .hb-button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .hb-button--lg {
+    min-height: var(--touch-checkin);
+    font-size: var(--font-size-lg);
+  }
+  .hb-button--block {
+    width: 100%;
+  }
+  .hb-button--primary {
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+  .hb-button--primary:hover:not(:disabled) {
+    background: color-mix(in oklab, var(--color-accent) 88%, var(--color-text));
+  }
+  .hb-button--secondary {
+    background: var(--color-surface);
+    color: var(--color-text);
+    border-color: var(--color-border);
+  }
+  .hb-button--secondary:hover:not(:disabled) {
+    background: var(--color-surface-2);
+  }
+  .hb-button--ghost {
+    background: transparent;
+    color: var(--color-accent);
+    padding-inline: var(--space-3);
+  }
+  .hb-button--ghost:hover:not(:disabled) {
+    background: var(--color-accent-soft);
+  }
+  .hb-button--social {
+    background: var(--color-social-soft);
+    color: var(--color-text);
+  }
+  .hb-button--danger {
+    background: transparent;
+    color: var(--color-danger);
+    border-color: currentColor;
+  }
+  .hb-button__icon {
+    display: inline-flex;
+  }
+  .hb-button--loading .hb-button__label {
+    opacity: 0.6;
+  }
+}

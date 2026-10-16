@@ -1,0 +1,96 @@
+/* Orden de capas: lo de abajo gana. Componentes nunca pisan utilidades. */
+@layer reset, tokens, base, components, utilities;
+
+@import "@habitos/tokens/tokens.css";
+@import "@habitos/ui/styles.css";
+
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  body,
+  h1,
+  h2,
+  h3,
+  p,
+  figure,
+  ul,
+  ol {
+    margin: 0;
+  }
+  img,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+}
+
+@layer base {
+  html {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 100%;
+    line-height: var(--line-height-body);
+    scroll-padding-bottom: calc(var(--nav-height) + var(--space-8));
+  }
+  body {
+    min-height: 100dvh;
+    background: var(--color-bg);
+  }
+  h1 {
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-tight);
+    font-weight: var(--font-weight-bold);
+  }
+  h2 {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-tight);
+  }
+  a {
+    color: var(--color-accent);
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--color-accent-soft);
+  }
+
+  /* Transiciones de vista nativas entre pantallas. */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: var(--motion-page);
+  }
+}
+
+@layer utilities {
+  .stack {
+    display: grid;
+    gap: var(--stack-gap, var(--space-4));
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .muted {
+    color: var(--color-text-muted);
+  }
+  .small {
+    font-size: var(--font-size-sm);
+  }
+}

@@ -1,0 +1,37 @@
+name: habitos-dev
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: habitos
+      POSTGRES_PASSWORD: habitos
+      POSTGRES_DB: habitos
+    ports:
+      - "127.0.0.1:${DB_PORT:-5442}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U habitos"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+  proxy:
+    image: caddy:2.10-alpine
+    ports:
+      - "${PROXY_PORT:-8180}:8080"
+    environment:
+      DOMAIN: ":8080"
+      API_UPSTREAM: host.docker.internal:${API_PORT:-3101}
+      WEB_UPSTREAM: host.docker.internal:${WEB_PORT:-3100}
+      # En desarrollo Next necesita eval y websockets para el recargado en caliente.
+      CSP_SCRIPT_EXTRA: "'unsafe-eval'"
+      CSP_CONNECT_EXTRA: "ws: wss:"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+
+volumes:
+  pgdata:

@@ -1,0 +1,7 @@
+@layer components {
+  .hb-icon {
+    flex: none;
+    display: inline-block;
+    vertical-align: middle;
+  }
+}

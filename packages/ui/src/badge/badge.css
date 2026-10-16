@@ -1,0 +1,34 @@
+@layer components {
+  .hb-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.6;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .hb-badge--neutral {
+    background: var(--color-surface-2);
+    color: var(--color-text-muted);
+  }
+  .hb-badge--accent {
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+  }
+  .hb-badge--celebrate {
+    background: var(--color-celebrate-soft);
+    color: var(--color-text);
+  }
+  .hb-badge--social {
+    background: var(--color-social-soft);
+    color: var(--color-text);
+  }
+  .hb-badge--calm {
+    background: var(--color-calm-soft);
+    color: var(--color-text);
+  }
+}

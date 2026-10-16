@@ -1,0 +1,75 @@
+@layer components {
+  .hb-reactions {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1);
+  }
+  .hb-reactions__chip,
+  .hb-reactions__add,
+  .hb-reactions__option {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    min-width: var(--touch-min);
+    min-height: 36px;
+    padding: 0 var(--space-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    font: inherit;
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: transform var(--motion-quick) var(--ease-out);
+  }
+  .hb-reactions__chip:active,
+  .hb-reactions__option:active {
+    transform: scale(0.9);
+  }
+  .hb-reactions__chip--mine {
+    background: var(--color-social-soft);
+    border-color: var(--color-social);
+    color: var(--color-text);
+  }
+  .hb-reactions__count {
+    font-variant-numeric: tabular-nums;
+  }
+  .hb-reactions__add svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+  }
+  .hb-reactions__palette {
+    display: flex;
+    gap: var(--space-1);
+    padding: var(--space-1);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-2);
+    animation: hb-palette-in var(--motion-base) var(--ease-spring);
+  }
+  .hb-reactions__option {
+    border: none;
+    background: transparent;
+    font-size: var(--font-size-lg);
+    min-height: var(--touch-min);
+  }
+  .hb-reactions__fly {
+    display: inline-block;
+    animation: hb-fly 600ms var(--ease-out);
+  }
+  @keyframes hb-fly {
+    50% {
+      transform: translateY(-14px) scale(1.5);
+    }
+  }
+  @keyframes hb-palette-in {
+    from {
+      opacity: 0;
+      scale: 0.9;
+    }
+  }
+}

@@ -1,0 +1,9 @@
+packages:
+  - apps/*
+  - packages/*
+allowBuilds:
+  "@biomejs/biome": true
+  esbuild: true
+  "@nestjs/core": true
+  sharp: true
+  unrs-resolver: true

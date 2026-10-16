@@ -1,0 +1,43 @@
+@layer components {
+  .hb-flame {
+    --flame-size: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    color: var(--color-celebrate);
+    font-weight: var(--font-weight-bold);
+    font-variant-numeric: tabular-nums;
+    font-size: var(--font-size-sm);
+  }
+  .hb-flame__icon {
+    width: var(--flame-size);
+    height: var(--flame-size);
+    fill: currentColor;
+    fill-opacity: 0.25;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linejoin: round;
+    transition: transform var(--motion-spring) var(--ease-spring);
+  }
+  .hb-flame__count {
+    color: var(--color-text);
+  }
+  .hb-flame--cold {
+    color: var(--color-neutral);
+  }
+  .hb-flame--m1 {
+    --flame-size: 20px;
+  }
+  .hb-flame--m2 {
+    --flame-size: 22px;
+  }
+  .hb-flame--m3 {
+    --flame-size: 24px;
+  }
+  .hb-flame--m1 .hb-flame__icon,
+  .hb-flame--m2 .hb-flame__icon,
+  .hb-flame--m3 .hb-flame__icon {
+    fill-opacity: 0.6;
+    filter: drop-shadow(0 0 4px color-mix(in oklab, var(--color-celebrate) 60%, transparent));
+  }
+}

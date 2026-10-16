@@ -1,0 +1,47 @@
+@layer components {
+  .hb-nudge {
+    display: grid;
+    gap: var(--space-2);
+  }
+  .hb-nudge__trigger {
+    justify-self: start;
+    min-height: 36px;
+    padding: 0 var(--space-4);
+    border: 1px solid var(--color-social);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--color-text);
+    font: inherit;
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+  }
+  .hb-nudge__trigger--open {
+    background: var(--color-social-soft);
+  }
+  .hb-nudge__menu {
+    display: grid;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .hb-nudge__option {
+    width: 100%;
+    min-height: var(--touch-min);
+    padding: var(--space-2) var(--space-4);
+    border: none;
+    border-radius: var(--radius-md);
+    background: var(--color-surface-2);
+    color: var(--color-text);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  .hb-nudge__option:hover {
+    background: var(--color-social-soft);
+  }
+  .hb-nudge--sent {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+  }
+}

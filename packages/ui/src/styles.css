@@ -1,0 +1,38 @@
+/* Un archivo CSS por componente, todos dentro de @layer components. */
+@layer reset, tokens, base, components, utilities;
+@import "./achievement-badge/achievement-badge.css";
+@import "./avatar/avatar.css";
+@import "./badge/badge.css";
+@import "./button/button.css";
+@import "./card/card.css";
+@import "./checkbox/checkbox.css";
+@import "./check-in-button/check-in-button.css";
+@import "./empty-state/empty-state.css";
+@import "./garden/garden.css";
+@import "./habit-card/habit-card.css";
+@import "./heatmap-calendar/heatmap-calendar.css";
+@import "./icon/icon.css";
+@import "./input/input.css";
+@import "./nudge-button/nudge-button.css";
+@import "./pact-feed-item/pact-feed-item.css";
+@import "./reaction-bar/reaction-bar.css";
+@import "./sheet/sheet.css";
+@import "./skeleton/skeleton.css";
+@import "./streak-flame/streak-flame.css";
+@import "./toast/toast.css";
+@import "./xp-bar/xp-bar.css";
+
+/* Texto solo para lectores de pantalla, usado por varios componentes. */
+@layer utilities {
+  .hb-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}

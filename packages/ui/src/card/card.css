@@ -1,0 +1,26 @@
+@layer components {
+  .hb-card {
+    display: block;
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+  }
+  .hb-card--accent {
+    background: var(--color-accent-soft);
+    border-color: transparent;
+  }
+  .hb-card--celebrate {
+    background: var(--color-celebrate-soft);
+    border-color: transparent;
+  }
+  .hb-card--social {
+    background: var(--color-social-soft);
+    border-color: transparent;
+  }
+  .hb-card--calm {
+    background: var(--color-calm-soft);
+    border-color: transparent;
+  }
+}

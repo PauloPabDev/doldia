@@ -1,0 +1,108 @@
+@layer components {
+  .hb-habit {
+    --identity-color: var(--color-accent);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    list-style: none;
+    touch-action: pan-y;
+    transition:
+      translate var(--motion-base) var(--ease-out),
+      opacity var(--motion-base) var(--ease-out),
+      box-shadow var(--motion-base) var(--ease-out);
+  }
+  .hb-habit--next {
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-accent) 35%, transparent);
+  }
+  .hb-habit--done {
+    background: transparent;
+    border-style: dashed;
+  }
+  .hb-habit--done .hb-habit__title {
+    color: var(--color-text-muted);
+  }
+  .hb-habit__main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .hb-habit__open {
+    flex: 1;
+    min-width: 0;
+    display: grid;
+    gap: 2px;
+    padding: var(--space-1) 0;
+    border: none;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  .hb-habit__identity {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .hb-habit__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--identity-color);
+  }
+  .hb-habit__title {
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-medium);
+    overflow-wrap: anywhere;
+  }
+  .hb-habit__meta {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+  }
+  .hb-habit__freedom {
+    display: grid;
+    justify-items: end;
+    color: var(--color-calm);
+    font-size: var(--font-size-xs);
+  }
+  .hb-habit__freedom strong {
+    font-size: var(--font-size-xl);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .hb-habit__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+  .hb-habit__more {
+    display: grid;
+    place-items: center;
+    width: var(--touch-min);
+    height: var(--touch-min);
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+  }
+  .hb-habit__more svg {
+    fill: currentColor;
+  }
+  .hb-habit__open:focus-visible,
+  .hb-habit__more:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+}

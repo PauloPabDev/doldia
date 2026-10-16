@@ -1,0 +1,40 @@
+@layer components {
+  .hb-garden {
+    margin: 0;
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    background: var(--color-accent-soft);
+  }
+  .hb-garden svg {
+    width: 100%;
+    height: auto;
+  }
+  .hb-garden__ground {
+    fill: color-mix(in oklab, var(--color-accent) 25%, var(--color-surface));
+  }
+  .hb-garden__stem {
+    stroke: var(--color-accent);
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+  .hb-garden__leaf {
+    fill: var(--color-accent);
+    opacity: 0.8;
+  }
+  .hb-garden__flower {
+    fill: var(--color-celebrate);
+    animation: hb-bloom var(--motion-spring) var(--ease-spring) both;
+  }
+  .hb-garden__caption {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    text-align: center;
+  }
+  @keyframes hb-bloom {
+    from {
+      scale: 0;
+    }
+  }
+}
