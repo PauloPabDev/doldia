@@ -18,7 +18,7 @@ services:
       retries: 20
 
   api:
-    image: ghcr.io/pedropab/doldia-api:${IMAGE_TAG:-latest}
+    image: ghcr.io/paulopabdev/doldia-api:${IMAGE_TAG:-latest}
     pull_policy: always
     restart: unless-stopped
     environment:
@@ -36,7 +36,7 @@ services:
       db: { condition: service_healthy }
 
   web:
-    image: ghcr.io/pedropab/doldia-web:${IMAGE_TAG:-latest}
+    image: ghcr.io/paulopabdev/doldia-web:${IMAGE_TAG:-latest}
     pull_policy: always
     restart: unless-stopped
     environment:
@@ -44,7 +44,7 @@ services:
     depends_on: [api]
 
   proxy:
-    image: ghcr.io/pedropab/doldia-proxy:${IMAGE_TAG:-latest}
+    image: ghcr.io/paulopabdev/doldia-proxy:${IMAGE_TAG:-latest}
     pull_policy: always
     restart: unless-stopped
     # Sin DOMAIN, Caddy escucha HTTP en :8080 y deja el TLS a Coolify.

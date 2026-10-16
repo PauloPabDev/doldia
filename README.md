@@ -46,7 +46,7 @@ La API aplica las migraciones al arrancar. El servicio `backup` hace `pg_dump` d
 Al hacer push a `main`:
 
 1. `check`: lint, tipos y pruebas.
-2. `image`: construye `api`, `web` y `proxy`, las publica en GHCR (`ghcr.io/pedropab/doldia-{api,web,proxy}`, etiquetas `latest` y `sha-<commit>`) con SBOM y procedencia firmada.
+2. `image`: construye `api`, `web` y `proxy`, las publica en GHCR (`ghcr.io/paulopabdev/doldia-{api,web,proxy}`, etiquetas `latest` y `sha-<commit>`) con SBOM y procedencia firmada.
 3. `deploy`: llama al webhook de Coolify para redesplegar.
 
 Configuración única:
